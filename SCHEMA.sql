@@ -214,6 +214,58 @@ CREATE TABLE client_loyalty (
     ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+-- Favorite_salons, Association table for user favorite salons (many-to-many) for UC 2.20
+CREATE TABLE favorite_salons (
+  user_id INT NOT NULL,
+  salon_id INT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, salon_id),
+  CONSTRAINT fk_favorite_salons_user
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_favorite_salons_salon
+    FOREIGN KEY (salon_id) REFERENCES salons(salon_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Payment_methods, Stores fake credit card information for clients (UC 2.18)
+CREATE TABLE payment_methods (
+  payment_method_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  card_holder_name VARCHAR(255) NOT NULL,
+  card_number_last_four VARCHAR(4) NOT NULL,
+  card_brand VARCHAR(50) NOT NULL,
+  expiry_month TINYINT NOT NULL,
+  expiry_year INT NOT NULL,
+  is_default BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_payment_methods_user
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Transactions, Records payment transactions for appointments (UC 2.19)
+CREATE TABLE transactions (
+  transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  appointment_id INT NOT NULL,
+  payment_method_id INT,
+  amount_cents INT NOT NULL,
+  status VARCHAR(50) NOT NULL DEFAULT 'completed',
+  transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_transactions_user
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_transactions_appointment
+    FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_transactions_payment_method
+    FOREIGN KEY (payment_method_id) REFERENCES payment_methods(payment_method_id)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
 -- Audit_log, Generic table to track important events (INSERT, UPDATE, DELETE) across other tables
 CREATE TABLE audit_log (
   audit_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -225,5 +277,22 @@ CREATE TABLE audit_log (
   changed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_audit_log_user
     FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Staff_ratings, Allows clients to rate individual staff members (UC 2.16)
+CREATE TABLE staff_ratings (
+  rating_id INT AUTO_INCREMENT PRIMARY KEY,
+  staff_id INT NOT NULL,
+  client_id INT NOT NULL,
+  rating TINYINT NOT NULL,
+  comment TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_staff_ratings_staff
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_staff_ratings_client
+    FOREIGN KEY (client_id) REFERENCES users(user_id)
     ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
