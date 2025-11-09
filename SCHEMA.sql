@@ -32,6 +32,8 @@ CREATE TABLE salons (
   salon_id INT AUTO_INCREMENT PRIMARY KEY,
   vendor_id INT NOT NULL,
   name VARCHAR(150) NOT NULL,
+  description TEXT,
+  business_type VARCHAR(100),
   address_line1 VARCHAR(150),
   address_line2 VARCHAR(150),
   city VARCHAR(100),
