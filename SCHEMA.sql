@@ -154,9 +154,8 @@ CREATE TABLE reviews (
   review_id INT AUTO_INCREMENT PRIMARY KEY,
   salon_id INT NOT NULL,
   client_id INT NOT NULL,
-  appointment_id INT NOT NULL,
   rating TINYINT NOT NULL,
-  review_text TEXT,
+  comment TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_reviews_salon
@@ -164,10 +163,7 @@ CREATE TABLE reviews (
     ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_reviews_client
     FOREIGN KEY (client_id) REFERENCES users(user_id)
-    ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT fk_reviews_appointment
-    FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id)
-    ON DELETE CASCADE ON UPDATE CASCADE
+    ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Review_replies, Allows vendors to reply to a client review for UC 1.11
