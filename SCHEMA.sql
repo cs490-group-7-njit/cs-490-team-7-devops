@@ -298,3 +298,204 @@ CREATE TABLE staff_ratings (
     FOREIGN KEY (client_id) REFERENCES users(user_id)
     ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+-- Notifications (UC 2.5)
+CREATE TABLE notifications (
+  notification_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  appointment_id INT,
+  title VARCHAR(200) NOT NULL,
+  message TEXT NOT NULL,
+  notification_type ENUM('appointment_confirmed', 'appointment_cancelled', 'appointment_rescheduled', 'appointment_completed', 'appointment_delayed', 'message_received', 'discount_alert', 'loyalty_points_earned', 'loyalty_redeemed') NOT NULL,
+  is_read BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_notifications_user
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_notifications_appointment
+    FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Messages (UC 2.7)
+CREATE TABLE messages (
+  message_id INT AUTO_INCREMENT PRIMARY KEY,
+  sender_id INT NOT NULL,
+  recipient_id INT NOT NULL,
+  salon_id INT,
+  subject VARCHAR(255) NOT NULL,
+  body TEXT NOT NULL,
+  is_read BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_messages_sender
+    FOREIGN KEY (sender_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_messages_recipient
+    FOREIGN KEY (recipient_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_messages_salon
+    FOREIGN KEY (salon_id) REFERENCES salons(salon_id)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Appointment Memos (UC 1.12)
+CREATE TABLE appointment_memos (
+  memo_id INT AUTO_INCREMENT PRIMARY KEY,
+  appointment_id INT NOT NULL,
+  vendor_id INT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_memos_appointment
+    FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_memos_vendor
+    FOREIGN KEY (vendor_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Loyalty Redemptions (UC 2.13)
+CREATE TABLE loyalty_redemptions (
+  redemption_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  points_redeemed INT NOT NULL,
+  discount_code VARCHAR(50) NOT NULL UNIQUE,
+  discount_value_cents INT NOT NULL,
+  is_used BOOLEAN NOT NULL DEFAULT FALSE,
+  redeemed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  used_at TIMESTAMP,
+  expires_at TIMESTAMP NOT NULL,
+  CONSTRAINT fk_redemptions_user
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Discount Alerts (UC 2.14)
+CREATE TABLE discount_alerts (
+  alert_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  salon_id INT,
+  discount_percentage INT NOT NULL,
+  discount_cents INT NOT NULL,
+  description TEXT NOT NULL,
+  is_read BOOLEAN NOT NULL DEFAULT FALSE,
+  is_dismissed BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP NOT NULL,
+  CONSTRAINT fk_alerts_user
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_alerts_salon
+    FOREIGN KEY (salon_id) REFERENCES salons(salon_id)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Product Purchases (UC 2.15)
+CREATE TABLE product_purchases (
+  purchase_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  quantity INT NOT NULL,
+  unit_price_cents INT NOT NULL,
+  total_price_cents INT NOT NULL,
+  order_status ENUM('pending', 'confirmed', 'shipped', 'delivered', 'cancelled') NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_purchases_user
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_purchases_product
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Service Images (UC 1.17)
+CREATE TABLE service_images (
+  image_id INT AUTO_INCREMENT PRIMARY KEY,
+  service_id INT NOT NULL,
+  image_type ENUM('before', 'after') NOT NULL,
+  image_url VARCHAR(500) NOT NULL,
+  title VARCHAR(200),
+  description TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_images_service
+    FOREIGN KEY (service_id) REFERENCES services(service_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Promotions (UC 1.18)
+CREATE TABLE promotions (
+  promotion_id INT AUTO_INCREMENT PRIMARY KEY,
+  salon_id INT NOT NULL,
+  vendor_id INT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  discount_percent INT,
+  discount_amount_cents INT,
+  target_customers VARCHAR(50) DEFAULT 'all',
+  start_date TIMESTAMP NOT NULL,
+  end_date TIMESTAMP NOT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_promotions_salon
+    FOREIGN KEY (salon_id) REFERENCES salons(salon_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_promotions_vendor
+    FOREIGN KEY (vendor_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Delay Notifications (UC 1.19)
+CREATE TABLE delay_notifications (
+  notification_id INT AUTO_INCREMENT PRIMARY KEY,
+  appointment_id INT NOT NULL,
+  staff_id INT NOT NULL,
+  delay_minutes INT NOT NULL,
+  reason VARCHAR(500),
+  sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_delay_notifications_appointment
+    FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_delay_notifications_staff
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Shop Products (UC 1.20)
+CREATE TABLE shop_products (
+  product_id INT AUTO_INCREMENT PRIMARY KEY,
+  salon_id INT NOT NULL,
+  vendor_id INT NOT NULL,
+  name VARCHAR(200) NOT NULL,
+  description TEXT,
+  price_cents INT NOT NULL,
+  stock_quantity INT NOT NULL DEFAULT 0,
+  image_url VARCHAR(500),
+  category VARCHAR(100),
+  is_available BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_shop_products_salon
+    FOREIGN KEY (salon_id) REFERENCES salons(salon_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_shop_products_vendor
+    FOREIGN KEY (vendor_id) REFERENCES users(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Social Media Links (UC 1.22)
+CREATE TABLE social_media_links (
+  link_id INT AUTO_INCREMENT PRIMARY KEY,
+  staff_id INT NOT NULL,
+  platform VARCHAR(50) NOT NULL,
+  url VARCHAR(500) NOT NULL,
+  handle VARCHAR(100),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_social_media_staff
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
