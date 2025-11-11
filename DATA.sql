@@ -332,10 +332,10 @@ INSERT INTO `payment_methods` (`payment_method_id`, `user_id`, `card_holder_name
 (9, 21, 'Claire Client', '3782', 'American Express', 5, 2027, 1),
 (10, 22, 'Daniel Client', '4916', 'Visa', 7, 2026, 1),
 (11, 23, 'Danielle Client', '5105', 'MasterCard', 4, 2025, 1),
-(12, 24, 'Derek Client', '378282246310005', 'American Express', 9, 2026, 1),
-(13, 25, 'Destiny Client', '6011111111111117', 'Discover', 12, 2025, 1),
-(14, 26, 'Ethan Client', '3782822463100', 'JCB', 6, 2027, 1),
-(15, 27, 'Eva Client', '5555555555554444', 'MasterCard', 8, 2026, 1);
+(12, 24, 'Derek Client', '3100', 'American Express', 9, 2026, 1),
+(13, 25, 'Destiny Client', '1117', 'Discover', 12, 2025, 1),
+(14, 26, 'Ethan Client', '3100', 'JCB', 6, 2027, 1),
+(15, 27, 'Eva Client', '4444', 'MasterCard', 8, 2026, 1);
 
 -- ========================
 -- FAVORITE_SALONS
@@ -372,7 +372,7 @@ INSERT INTO `transactions` (`transaction_id`, `user_id`, `appointment_id`, `paym
 (5, 17, 5, 5, 8000, 'completed', '2025-11-04 15:35:00'),
 (6, 18, 6, 6, 4000, 'completed', '2025-11-05 11:45:00'),
 (7, 19, 7, 7, 3000, 'completed', '2025-11-05 09:35:00'),
-(8, 20, 8, 8, 4500, 'completed', '2025-11-06 15:60:00'),
+(8, 20, 8, 8, 4500, 'completed', '2025-11-06 15:59:00'),
 (9, 21, 9, 9, 6000, 'completed', '2025-11-06 11:05:00'),
 (10, 22, 10, 10, 8000, 'completed', '2025-11-07 12:20:00'),
 (11, 14, 11, 1, 1500, 'pending', '2025-11-12 10:15:00'),
