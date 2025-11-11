@@ -42,6 +42,8 @@ CREATE TABLE salons (
   phone VARCHAR(30),
   is_published TINYINT(1) NOT NULL DEFAULT 0,
   verification_status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  delay_notifications_data JSON DEFAULT NULL,
+  social_media_data JSON DEFAULT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_salons_vendor
