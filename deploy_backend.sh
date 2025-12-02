@@ -12,6 +12,11 @@ echo "Pulling latest changes from repository..."
 cd /home/ubuntu/backend
 git pull origin main
 
+# Activate virtual environment and install requirements
+echo "Installing dependencies..."
+source .venv/bin/activate
+pip install -r requirements.txt
+
 echo "Restarting backend service..."
 sudo systemctl restart backend
 
