@@ -138,6 +138,7 @@ CREATE TABLE appointments (
   ends_at DATETIME NOT NULL,
   status ENUM('booked','completed','cancelled','no-show') NOT NULL DEFAULT 'booked',
   notes TEXT, -- For appointment memos UC 1.12
+  image_data JSON,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_appt_salon
