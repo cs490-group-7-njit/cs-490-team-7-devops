@@ -75,7 +75,7 @@ $MYSQL_CMD < "$SCHEMA_FILE" || {
 }
 
 echo "Loading sample data..."
-$MYSQL_CMD < "$DATA_FILE" || {
+$MYSQL_CMD salonhub < "$DATA_FILE" || {
   echo "Error: Failed to load data." >&2
   exit 1
 }
