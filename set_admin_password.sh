@@ -52,11 +52,22 @@ echo "Setting password for Ada Admin (user_id: $USER_ID, email: $USER_EMAIL)"
 echo "Connecting to: $USER@$HOST:$PORT/$DB_NAME"
 echo ""
 
-# Generate werkzeug password hash using Python
-PASSWORD_HASH=$(python3 -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('$NEW_PASSWORD'))")
+# Get the backend directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BACKEND_DIR="$(dirname "$SCRIPT_DIR")/backend"
+
+# Generate werkzeug password hash using Flask app context from backend
+PASSWORD_HASH=$(cd "$BACKEND_DIR" && python3 -c "
+import sys
+sys.path.insert(0, '.')
+from app import create_app
+from werkzeug.security import generate_password_hash
+app = create_app()
+print(generate_password_hash('$NEW_PASSWORD'))
+")
 
 if [ $? -ne 0 ]; then
-  echo "✗ Failed to generate password hash. Make sure werkzeug is installed."
+  echo "✗ Failed to generate password hash. Make sure you're running from the devops directory."
   exit 1
 fi
 
