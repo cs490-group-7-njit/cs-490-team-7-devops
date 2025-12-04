@@ -9,8 +9,26 @@ import argparse
 import os
 import sys
 import subprocess
+import venv
 
-# Install required packages if not available
+# Set up venv if not already in one
+script_dir = os.path.dirname(os.path.abspath(__file__))
+venv_dir = os.path.join(script_dir, "venv")
+
+# Check if we're in a venv
+in_venv = hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+
+if not in_venv:
+    print(f"Setting up virtual environment in {venv_dir}...")
+    if not os.path.exists(venv_dir):
+        venv.create(venv_dir, with_pip=True)
+    
+    # Re-run this script in the venv
+    venv_python = os.path.join(venv_dir, "bin", "python")
+    print(f"Re-running script in venv...")
+    os.execv(venv_python, [venv_python] + sys.argv)
+
+# Install required packages in venv
 try:
     from werkzeug.security import generate_password_hash
 except ImportError:
