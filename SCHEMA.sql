@@ -502,3 +502,23 @@ CREATE TABLE social_media_links (
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
     ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+-- Appointment Images - Before/After service transformation photos (UC 2.17, UC 1.8)
+CREATE TABLE appointment_images (
+  image_id INT AUTO_INCREMENT PRIMARY KEY,
+  appointment_id INT NOT NULL,
+  image_type ENUM('before', 'after', 'other') NOT NULL,
+  image_url VARCHAR(500) NOT NULL,
+  s3_key VARCHAR(500),
+  description LONGTEXT,
+  uploaded_by_id INT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_appointment_images_appointment
+    FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_appointment_images_uploader
+    FOREIGN KEY (uploaded_by_id) REFERENCES users(user_id)
+    ON DELETE SET NULL ON UPDATE CASCADE,
+  INDEX idx_appointment (appointment_id),
+  INDEX idx_type (image_type),
+  INDEX idx_created (created_at)
+) ENGINE=InnoDB;
