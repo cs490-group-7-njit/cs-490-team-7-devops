@@ -46,26 +46,27 @@ except ImportError:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Reset Ada Admin password to 'password' for testing"
+        description="Reset Ada Admin password to 'password' for testing",
+        add_help=True
     )
     parser.add_argument(
-        "-h", "--host",
+        "--host",
         default=os.getenv("MYSQL_HOST", "localhost"),
         help="MySQL host (default: localhost)"
     )
     parser.add_argument(
-        "-P", "--port",
+        "--port",
         type=int,
         default=int(os.getenv("MYSQL_PORT", 3306)),
         help="MySQL port (default: 3306)"
     )
     parser.add_argument(
-        "-u", "--user",
+        "--user",
         default=os.getenv("MYSQL_USER", "root"),
         help="MySQL user (default: root)"
     )
     parser.add_argument(
-        "-p", "--password",
+        "--password",
         default=os.getenv("MYSQL_PASSWORD", ""),
         help="MySQL password (optional)"
     )
