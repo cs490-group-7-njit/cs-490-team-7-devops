@@ -57,23 +57,14 @@ echo "Connecting to: $USER@$HOST:$PORT/$DB_NAME"
 echo ""
 
 # Build MySQL command
-if [ -z "$MYSQL_PASSWORD" ]; then
-  # No password
-  mysql -h "$HOST" -P "$PORT" -u "$USER" "$DB_NAME" -e "
-    UPDATE auth_accounts 
-    SET password_hash = PASSWORD('$NEW_PASSWORD'), updated_at = NOW() 
-    WHERE user_id = $USER_ID;
-    SELECT 'Password updated successfully!' as status;
-  "
-else
-  # With password
-  mysql -h "$HOST" -P "$PORT" -u "$USER" -p"$MYSQL_PASSWORD" "$DB_NAME" -e "
-    UPDATE auth_accounts 
-    SET password_hash = PASSWORD('$NEW_PASSWORD'), updated_at = NOW() 
-    WHERE user_id = $USER_ID;
-    SELECT 'Password updated successfully!' as status;
-  "
-fi
+MYSQL_CMD="mysql -h $HOST -P $PORT -u $USER -p$MYSQL_PASSWORD"
+
+$MYSQL_CMD "$DB_NAME" -e "
+  UPDATE auth_accounts 
+  SET password_hash = PASSWORD('$NEW_PASSWORD'), updated_at = NOW() 
+  WHERE user_id = $USER_ID;
+  SELECT 'Password updated successfully!' as status;
+"
 
 if [ $? -eq 0 ]; then
   echo ""
