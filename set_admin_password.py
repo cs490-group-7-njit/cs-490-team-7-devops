@@ -73,6 +73,14 @@ def main():
 
     args = parser.parse_args()
 
+    # Extract just the hostname if MYSQL_HOST contains connection options
+    host = args.host
+    if "-h" in host:
+        # Extract hostname from connection string like "mysql -h beautiful-hair-prod.cpaca644yqc6.us-east-2.rds.amazonaws.com"
+        parts = host.split("-h")
+        if len(parts) > 1:
+            host = parts[1].strip().split()[0]
+
     # Constants
     db_name = "salonhub"
     new_password = "password"
@@ -80,7 +88,7 @@ def main():
     user_email = "ada.admin@example.com"
 
     print(f"Setting password for Ada Admin (user_id: {user_id}, email: {user_email})")
-    print(f"Connecting to: {args.user}@{args.host}:{args.port}/{db_name}")
+    print(f"Connecting to: {args.user}@{host}:{args.port}/{db_name}")
     print()
 
     # Generate password hash
@@ -89,7 +97,7 @@ def main():
     try:
         # Connect to database
         conn = mysql.connector.connect(
-            host=args.host,
+            host=host,
             port=args.port,
             user=args.user,
             password=args.password,
