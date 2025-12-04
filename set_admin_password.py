@@ -8,14 +8,22 @@ Or with options: python3 set_admin_password.py -h localhost -u root -P 3306 -p p
 import argparse
 import os
 import sys
-from werkzeug.security import generate_password_hash
+import subprocess
+
+# Install required packages if not available
+try:
+    from werkzeug.security import generate_password_hash
+except ImportError:
+    print("Installing werkzeug...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "werkzeug"])
+    from werkzeug.security import generate_password_hash
 
 try:
     import mysql.connector
 except ImportError:
-    print("Error: mysql-connector-python is not installed")
-    print("Install it with: pip install mysql-connector-python")
-    sys.exit(1)
+    print("Installing mysql-connector-python...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "mysql-connector-python"])
+    import mysql.connector
 
 
 def main():
