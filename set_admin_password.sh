@@ -56,16 +56,13 @@ echo ""
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_DIR="$(dirname "$SCRIPT_DIR")/backend"
 
-# Generate werkzeug password hash using Flask app context from backend
+# Generate werkzeug password hash
 # Source the activate script to set up the environment
-PASSWORD_HASH=$(cd "$BACKEND_DIR" && source activate.sh 2>/dev/null; python3 -c "
-import sys
-sys.path.insert(0, '.')
-from app import create_app
+PASSWORD_HASH=$(cd "$BACKEND_DIR" && source activate.sh 2>/dev/null; python3 << 'PYTHON_EOF'
 from werkzeug.security import generate_password_hash
-app = create_app()
-print(generate_password_hash('$NEW_PASSWORD'))
-")
+print(generate_password_hash('password'))
+PYTHON_EOF
+)
 
 if [ $? -ne 0 ]; then
   echo "✗ Failed to generate password hash. Make sure you're running from the devops directory."
