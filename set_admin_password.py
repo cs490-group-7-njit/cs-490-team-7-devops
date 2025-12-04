@@ -7,8 +7,8 @@ Or with options: python3 set_admin_password.py -h localhost -u root -P 3306 -p p
 
 import argparse
 import os
-import sys
 import subprocess
+import sys
 import venv
 
 # Set up venv if not already in one
@@ -75,19 +75,13 @@ def main():
 
     # Extract just the hostname if MYSQL_HOST contains connection options
     host = args.host
-    print(f"DEBUG: MYSQL_HOST env var = '{os.getenv('MYSQL_HOST', 'NOT SET')}'")
-    print(f"DEBUG: args.host = '{host}'")
     
     if "-h" in host:
         # Extract hostname from connection string like "mysql -h beautiful-hair-prod.cpaca644yqc6.us-east-2.rds.amazonaws.com"
-        parts = host.split("-h")
+        parts = host.split("-h ")
         if len(parts) > 1:
-            # Get everything after "-h " and take the first word/token that's the hostname
-            remaining = parts[1].strip()
-            # The hostname ends at a space or is the whole remaining string
-            host = remaining.split()[0] if ' ' in remaining else remaining
-    
-    print(f"DEBUG: final host = '{host}'")
+            # Get everything after "-h " - the hostname
+            host = parts[1].strip()
 
     # Constants
     db_name = "salonhub"
