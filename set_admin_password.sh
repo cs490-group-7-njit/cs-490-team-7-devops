@@ -57,7 +57,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_DIR="$(dirname "$SCRIPT_DIR")/backend"
 
 # Generate werkzeug password hash using Flask app context from backend
-PASSWORD_HASH=$(cd "$BACKEND_DIR" && python3 -c "
+# Source the activate script to set up the environment
+PASSWORD_HASH=$(cd "$BACKEND_DIR" && source activate.sh 2>/dev/null; python3 -c "
 import sys
 sys.path.insert(0, '.')
 from app import create_app
