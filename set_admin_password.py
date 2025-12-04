@@ -75,11 +75,19 @@ def main():
 
     # Extract just the hostname if MYSQL_HOST contains connection options
     host = args.host
+    print(f"DEBUG: MYSQL_HOST env var = '{os.getenv('MYSQL_HOST', 'NOT SET')}'")
+    print(f"DEBUG: args.host = '{host}'")
+    
     if "-h" in host:
         # Extract hostname from connection string like "mysql -h beautiful-hair-prod.cpaca644yqc6.us-east-2.rds.amazonaws.com"
         parts = host.split("-h")
         if len(parts) > 1:
-            host = parts[1].strip().split()[0]
+            # Get everything after "-h " and take the first word/token that's the hostname
+            remaining = parts[1].strip()
+            # The hostname ends at a space or is the whole remaining string
+            host = remaining.split()[0] if ' ' in remaining else remaining
+    
+    print(f"DEBUG: final host = '{host}'")
 
     # Constants
     db_name = "salonhub"
