@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to set Ada Admin password to 'password'
-# Uses same environment variables as restart_database.sh
+# Uses Python to generate proper werkzeug password hash
 # Usage: ./set_admin_password.sh
 # Or with options: ./set_admin_password.sh -h localhost -u root -P 3306 -p password
 
@@ -44,11 +44,7 @@ while getopts ":h:P:u:p:" opt; do
 done
 
 DB_NAME="salonhub"
-
-# Password to set
 NEW_PASSWORD="password"
-
-# Ada Admin user_id is 1
 USER_ID=1
 USER_EMAIL="ada.admin@example.com"
 
@@ -56,15 +52,19 @@ echo "Setting password for Ada Admin (user_id: $USER_ID, email: $USER_EMAIL)"
 echo "Connecting to: $USER@$HOST:$PORT/$DB_NAME"
 echo ""
 
+# Generate werkzeug password hash using Python
+PASSWORD_HASH=$(python3 -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('$NEW_PASSWORD'))")
+
+if [ $? -ne 0 ]; then
+  echo "✗ Failed to generate password hash. Make sure werkzeug is installed."
+  exit 1
+fi
+
 # Build MySQL command
 MYSQL_CMD="mysql -h $HOST -P $PORT -u $USER -p$MYSQL_PASSWORD"
 
-$MYSQL_CMD "$DB_NAME" -e "
-  UPDATE auth_accounts 
-  SET password_hash = PASSWORD('$NEW_PASSWORD'), updated_at = NOW() 
-  WHERE user_id = $USER_ID;
-  SELECT 'Password updated successfully!' as status;
-"
+# Update the password hash in database
+$MYSQL_CMD "$DB_NAME" -e "UPDATE auth_accounts SET password_hash = '$PASSWORD_HASH', updated_at = NOW() WHERE user_id = $USER_ID;"
 
 if [ $? -eq 0 ]; then
   echo ""
