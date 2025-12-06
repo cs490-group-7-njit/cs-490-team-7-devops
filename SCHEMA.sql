@@ -8,7 +8,7 @@ CREATE TABLE users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
-  role ENUM('client','vendor','admin') NOT NULL DEFAULT 'client',
+  role ENUM('client','vendor','admin','barber') NOT NULL DEFAULT 'client',
   phone VARCHAR(30),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -119,6 +119,8 @@ CREATE TABLE products (
   description TEXT,
   price_cents INT NOT NULL,
   stock_quantity INT NOT NULL DEFAULT 0,
+  category VARCHAR(100),
+  is_available TINYINT(1) NOT NULL DEFAULT 1,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_products_salon
