@@ -115,7 +115,8 @@ INSERT INTO `users` (`user_id`, `name`, `email`, `role`, `phone`) VALUES
 (103, 'Lawrence Client', 'lawrence.client@example.com', 'client', '212-555-1173'),
 (104, 'Lucille Client', 'lucille.client@example.com', 'client', '718-555-1174'),
 (105, 'Louis Client', 'louis.client@example.com', 'client', '212-555-1175'),
-(106, 'Louise Client', 'louise.client@example.com', 'client', '718-555-1176');
+(106, 'Louise Client', 'louise.client@example.com', 'client', '718-555-1176'),
+(107, 'Test Barber', 'barber@test.com', 'barber', '555-0123');
 
 -- ========================
 -- AUTH_ACCOUNTS (password_hash = MD5('manager') for all test users)
@@ -226,7 +227,8 @@ INSERT INTO `auth_accounts` (`user_id`, `password_hash`) VALUES
 (103, '5f4dcc3b5aa765d61d8327deb882cf99'),
 (104, '5f4dcc3b5aa765d61d8327deb882cf99'),
 (105, '5f4dcc3b5aa765d61d8327deb882cf99'),
-(106, '5f4dcc3b5aa765d61d8327deb882cf99');
+(106, '5f4dcc3b5aa765d61d8327deb882cf99'),
+(107, '5f4dcc3b5aa765d61d8327deb882cf99');
 
 -- ========================
 -- SALONS
