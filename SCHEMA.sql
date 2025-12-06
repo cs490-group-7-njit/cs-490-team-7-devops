@@ -528,12 +528,14 @@ CREATE TABLE appointment_images (
 ) ENGINE=InnoDB;
 
 -- Salon Images - Gallery photos and before/after transformations for salon display (UC 1.X)
+-- Images are stored directly in the database as LONGBLOB for simplicity and reliability
 CREATE TABLE salon_images (
   image_id INT AUTO_INCREMENT PRIMARY KEY,
   salon_id INT NOT NULL,
   image_type ENUM('before', 'after', 'gallery') NOT NULL DEFAULT 'gallery',
-  image_url VARCHAR(500) NOT NULL,
-  s3_key VARCHAR(500),
+  image_data LONGBLOB NOT NULL,
+  image_mime_type VARCHAR(50) NOT NULL DEFAULT 'image/jpeg',
+  filename VARCHAR(255) NOT NULL,
   description TEXT,
   uploaded_by_id INT,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
