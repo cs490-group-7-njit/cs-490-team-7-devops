@@ -119,7 +119,8 @@ INSERT INTO `users` (`user_id`, `name`, `email`, `role`, `phone`) VALUES
 (107, 'Test Barber', 'barber@test.com', 'barber', '555-0123');
 
 -- ========================
--- AUTH_ACCOUNTS (password_hash = MD5('manager') for all test users)
+-- AUTH_ACCOUNTS (password_hash for all test users - password='manager')
+-- Note: Using MD5 hashes for backward compatibility with existing data
 -- ========================
 INSERT INTO `auth_accounts` (`user_id`, `password_hash`) VALUES
 (1, '5f4dcc3b5aa765d61d8327deb882cf99'),
