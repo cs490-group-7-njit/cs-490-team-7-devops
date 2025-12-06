@@ -15,9 +15,11 @@ CREATE TABLE users (
 ) ENGINE=InnoDB;
 
 -- Auth_accounts, Login data for each user, password hash and last login, kept separate from users
+-- NOTE: password_hash uses werkzeug.security format (pbkdf2 or scrypt)
+-- pbkdf2 hashes are ~103 chars, scrypt hashes are ~162 chars. Using VARCHAR(500) to be safe.
 CREATE TABLE auth_accounts (
   user_id INT PRIMARY KEY,
-  password_hash VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(500) NOT NULL,
   last_login_at DATETIME NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -122,6 +122,8 @@ INSERT INTO `users` (`user_id`, `name`, `email`, `role`, `phone`) VALUES
 -- AUTH_ACCOUNTS (password_hash for all test users - password='manager')
 -- Note: Using werkzeug pbkdf2 hashes for compatibility with Flask backend
 -- ========================
+-- All passwords are 'manager'. Use pbkdf2 format (103 chars), not scrypt (162 chars - too long for VARCHAR(255))
+-- To generate: python3 -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('manager', method='pbkdf2'))"
 INSERT INTO `auth_accounts` (`user_id`, `password_hash`) VALUES
 (1, 'pbkdf2:sha256:1000000$UgZx6by3AVwWgXUS$af310ab2687823545d167744796399881e0e8dc7a5eec22f214001601b3bbb4b'),
 (2, 'pbkdf2:sha256:1000000$UgZx6by3AVwWgXUS$af310ab2687823545d167744796399881e0e8dc7a5eec22f214001601b3bbb4b'),
